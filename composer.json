@@ -1,0 +1,19 @@
+{
+    "name": "alisson04/api-response-saver",
+    "description": "Save responses from api calls to use at the second call",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Alisson04\\ApiResponseSaver\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alisson Fernandes",
+            "email": "alissonvinicios04@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    }
+}
