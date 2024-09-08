@@ -1,0 +1,9 @@
+version: '3'
+services:
+  www:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/var/www/html"
+      - "${RESPONSES_LOCAL_PAH}:/var/www/responses"
