@@ -40,5 +40,8 @@ composer-show:
 
 #COMPOSER COMMANDS
 #========================================
+test-init:
+	docker compose exec $(PHP_SERVICE) ./vendor/bin/pest --init
+
 test:
 	docker compose exec $(PHP_SERVICE) ./vendor/bin/pest
