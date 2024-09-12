@@ -6,9 +6,6 @@ beforeEach(function () {
     $mapUris = [
         'ConsultarTabelaDeReferencia' => 'references',
         'ConsultarMarcas' => 'brands',
-        'ConsultarModelos' => 'models',
-        'ConsultarAnoModelo' => 'year-model',
-        'ConsultarValorComTodosParametros' => 'prices',
     ];
 
     $mapParams = [
@@ -24,9 +21,14 @@ beforeEach(function () {
     $this->service = new GenerateLocalReponsePath($mapUris, $mapParams, $mapUriNecessaryParams);
 });
 
-it('should generate path to references', function () {
+it('should generate path for references', function () {
     $path = $this->service->run('ConsultarTabelaDeReferencia', []);
     expect($path)->toEqual('references');
+});
+
+it('should generate path for brands', function () {
+    $path = $this->service->run('ConsultarMarcas', ['codigoTabelaReferencia' => 1, 'codigoTipoVeiculo' => 1]);
+    expect($path)->toEqual('brands/reference1/vehicle-type1');
 });
 
 it('throws exception by wrong uri', function () {

@@ -22,7 +22,7 @@ class GenerateLocalReponsePath
         $filePath = $this->mapUris[$uri];
 
         foreach ($formParams as $key => $value) {
-            $filePath .= $this->mapParams[$key] . "/{$value}/";
+            $filePath .= '/' . $this->mapParams[$key] . "{$value}";
         }
 
         return $filePath;
@@ -41,7 +41,7 @@ class GenerateLocalReponsePath
     {
         $formParamsKeys = array_keys($formParams);
 
-        $invalidParams = array_diff($formParamsKeys, $this->mapParams);
+        $invalidParams = array_diff($formParamsKeys, array_keys($this->mapParams));
         if (! empty($invalidParams)) {
             throw new \Exception("Invalid params found: " . implode(', ', $invalidParams));
         }
