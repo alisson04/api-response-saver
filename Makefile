@@ -29,6 +29,9 @@ composer-install:
 composer-update:
 	docker compose exec $(PHP_SERVICE) composer update
 
+composer-remove:
+	docker compose exec $(PHP_SERVICE) composer remove $(package)
+
 composer-dump:
 	docker compose exec $(PHP_SERVICE) sh -c "composer dumpautoload"
 
@@ -38,7 +41,12 @@ composer-require:
 composer-show:
 	docker compose exec $(PHP_SERVICE) composer show $(package)
 
-#COMPOSER COMMANDS
+#INSIGHTS COMMANDS
+#========================================
+insights:
+	docker compose exec $(PHP_SERVICE) ./vendor/bin/phpinsights
+
+#TEST COMMANDS
 #========================================
 test-init:
 	docker compose exec $(PHP_SERVICE) ./vendor/bin/pest --init
