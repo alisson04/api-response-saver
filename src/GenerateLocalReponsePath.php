@@ -1,13 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Alisson04\ApiResponseSaver;
 
-class GenerateLocalReponsePath
+final class GenerateLocalReponsePath
 {
+    /**
+     * @var array<string, string> $mapUris
+     */
     private array $mapUris;
+
+    /**
+     * @var array<string, string> $mapParams
+     */
     private array $mapParams;
+
+    /**
+     * @var array<string, string> $mapUriNecessaryParams
+     */
     private array $mapUriNecessaryParams;
 
+    private string $uri;
+
+    /**
+     * @var array<string, int|string> $formParams
+     */
+    private array $formParams;
+
+    /**
+     * @param array<string, string> $mapUris
+     * @param array<string, string> $mapParams
+     * @param array<string, string> $mapUriNecessaryParams
+     */
     public function __construct(
         array $mapUris,
         array $mapParams,
@@ -18,9 +43,15 @@ class GenerateLocalReponsePath
         $this->mapUriNecessaryParams = $mapUriNecessaryParams;
     }
 
+    /**
+     * @param array<string, int|string> $formParams
+     */
     public function run(string $uri, array $formParams = []): string
     {
-        $this->validate($uri, $formParams);
+        $this->uri = $uri;
+        $this->formParams = $formParams;
+
+        $this->validate();
 
         $filePath = $this->mapUris[$uri];
 
@@ -31,61 +62,66 @@ class GenerateLocalReponsePath
         return $filePath;
     }
 
-    private function validate(string $uri, array $formParams): void
+    private function validate(): void
     {
-        $this->validateUri($uri);
+        $this->validateUri($this->uri);
 
-        $formParamsKeys = array_keys($formParams);
+        $formParamsKeys = array_keys($this->formParams);
 
         $this->validateInvalidParams($formParamsKeys);
-        $this->validateInvalidParamsForUri($uri, $formParamsKeys);
-        $this->validateMissingParamsForUri($uri, $formParamsKeys);
+        $this->validateInvalidParamsForUri($formParamsKeys);
+        $this->validateMissingParamsForUri($formParamsKeys);
     }
 
-    private function validateUri(string $uri): void
+    private function validateUri(): void
     {
-        $invalidUri = ! isset($this->mapUris[$uri]);
+        $invalidUri = ! isset($this->mapUris[$this->uri]);
 
         if ($invalidUri) {
-            throw new \Exception("Uri not found: {$uri}");
+            throw new \Exception("Uri not found: {$this->uri}");
         }
     }
 
-    private function validateInvalidParamsForUri(
-        string $uri,
-        array $formParamsKeys
-    ): void {
-        $uriNecessaryParams = $this->mapUriNecessaryParams[$uri];
+    /**
+     * @param array<int, string> $formParamsKeys
+     */
+    private function validateInvalidParamsForUri(array $formParamsKeys): void
+    {
+        $uriNecessaryParams = $this->mapUriNecessaryParams[$this->uri];
 
         $invalidParamsForUri = array_diff($formParamsKeys, $uriNecessaryParams);
-        if (! empty($invalidParamsForUri)) {
+        if (count($invalidParamsForUri)) {
             $paramsString = implode(', ', $invalidParamsForUri);
             throw new \Exception(
-                "Invalid params for uri({$uri}): {$paramsString}"
+                "Invalid params for uri({$this->uri}): {$paramsString}"
             );
         }
     }
 
+    /**
+     * @param array<int, string> $formParamsKeys
+     */
     private function validateInvalidParams(array $formParamsKeys): void
     {
         $mapParamsKeys = array_keys($this->mapParams);
         $invalidParams = array_diff($formParamsKeys, $mapParamsKeys);
-        if (! empty($invalidParams)) {
+        if (count($invalidParams)) {
             $paramsString = implode(', ', $invalidParams);
             throw new \Exception("Invalid params found: {$paramsString}");
         }
     }
 
-    private function validateMissingParamsForUri(
-        string $uri,
-        array $formParamsKeys
-    ): void {
-        $uriNecessaryParams = $this->mapUriNecessaryParams[$uri];
+    /**
+     * @param array<int, string> $formParamsKeys
+     */
+    private function validateMissingParamsForUri(array $formParamsKeys): void
+    {
+        $uriNecessaryParams = $this->mapUriNecessaryParams[$this->uri];
         $missingRequired = array_diff($uriNecessaryParams, $formParamsKeys);
-        if (! empty($missingRequired)) {
+        if (count($missingRequired)) {
             $paramsString = implode(', ', $missingRequired);
             throw new \Exception(
-                "Missing params for uri({$uri}): {$paramsString}"
+                "Missing params for uri({$this->uri}): {$paramsString}"
             );
         }
     }
