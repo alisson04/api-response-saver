@@ -41,7 +41,7 @@ it('throws exception by wrong params', function () {
 
 it('throws exception by wrong params for uri', function () {
     $this->service->run('ConsultarTabelaDeReferencia', ['codigoTabelaReferencia' => 1]);
-})->throws('Invalid params for uri(ConsultarTabelaDeReferencia) was found: codigoTabelaReferencia');
+})->throws('Invalid params for uri(ConsultarTabelaDeReferencia): codigoTabelaReferencia');
 
 it('throws exception by missing params for uri', function () {
     $path = $this->service->run('ConsultarMarcas', []);
