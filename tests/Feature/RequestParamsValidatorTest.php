@@ -1,6 +1,6 @@
 <?php
 
-use Alisson04\ApiResponseSaver\RequestValidator;
+use Alisson04\ApiResponseSaver\Validators\RequestParamsValidator;
 
 beforeEach(function () {
     $mapUris = [
@@ -18,22 +18,24 @@ beforeEach(function () {
         'ConsultarMarcas' => ['codigoTabelaReferencia', 'codigoTipoVeiculo'],
     ];
 
-    $this->service = new RequestValidator($mapUris, $mapParams, $mapUriNecessaryParams);
+    $this->service = new RequestParamsValidator(
+        $mapUris,
+        $mapParams,
+        $mapUriNecessaryParams
+    );
 });
 
-it('throws exception by wrong uri', function () {
-    $this->service->run('ConsultarTabelaDeReferencia1', []);
-})->throws('Uri not found: ConsultarTabelaDeReferencia1');
-
 it('throws exception by wrong params', function () {
-    $this->service->run('ConsultarTabelaDeReferencia', ['wrongParam' => 'wrongValue', 'reference' => 1]);
+    $this->service
+        ->validate('ConsultarTabelaDeReferencia', ['wrongParam' => 'wrongValue', 'reference' => 1]);
 })->throws('Invalid params found: wrongParam');
 
 it('throws exception by wrong params for uri', function () {
-    $this->service->run('ConsultarTabelaDeReferencia', ['codigoTabelaReferencia' => 1]);
+    $this->service
+        ->validate('ConsultarTabelaDeReferencia', ['codigoTabelaReferencia' => 1]);
 })->throws('Invalid params for uri(ConsultarTabelaDeReferencia): codigoTabelaReferencia');
 
 it('throws exception by missing params for uri', function () {
-    $path = $this->service->run('ConsultarMarcas', []);
+    $path = $this->service->validate('ConsultarMarcas', []);
     expect($path)->toEqual('references');
 })->throws('Missing params for uri(ConsultarMarcas): codigoTabelaReferencia, codigoTipoVeiculo');

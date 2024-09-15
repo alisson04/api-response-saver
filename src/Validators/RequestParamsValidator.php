@@ -2,71 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Alisson04\ApiResponseSaver;
+namespace Alisson04\ApiResponseSaver\Validators;
 
-final class RequestValidator
+final class RequestParamsValidator extends RequestValidator
 {
-    /**
-     * @var array<string, string> $mapUris
-     */
-    private array $mapUris;
-
-    /**
-     * @var array<string, string> $mapParams
-     */
-    private array $mapParams;
-
-    /**
-     * @var array<string, string> $mapUriRequiredParams
-     */
-    private array $mapUriRequiredParams;
-
-    private string $uri;
-
-    /**
-     * @var array<string, int|string> $formParams
-     */
-    private array $formParams;
-
-    /**
-     * @param array<string, string> $mapUris
-     * @param array<string, string> $mapParams
-     * @param array<string, string> $mapUriRequiredParams
-     */
-    public function __construct(
-        array $mapUris,
-        array $mapParams,
-        array $mapUriRequiredParams
-    ) {
-        $this->mapUris = $mapUris;
-        $this->mapParams = $mapParams;
-        $this->mapUriRequiredParams = $mapUriRequiredParams;
-    }
-
     /**
      * @param array<string, int|string> $formParams
      */
-    public function run(string $uri, array $formParams): void
+    public function validate(string $uri, array $formParams): void
     {
         $this->uri = $uri;
         $this->formParams = $formParams;
-
-        $this->validateUri($this->uri);
 
         $formParamsKeys = array_keys($this->formParams);
 
         $this->validateInvalidParams($formParamsKeys);
         $this->validateInvalidParamsForUri($formParamsKeys);
         $this->validateMissingParamsForUri($formParamsKeys);
-    }
-
-    private function validateUri(): void
-    {
-        $invalidUri = ! isset($this->mapUris[$this->uri]);
-
-        if ($invalidUri) {
-            throw new \Exception("Uri not found: {$this->uri}");
-        }
     }
 
     /**
