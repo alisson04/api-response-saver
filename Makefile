@@ -46,6 +46,9 @@ composer-show:
 insights:
 	docker compose exec $(PHP_SERVICE) ./vendor/bin/phpinsights
 
+insights-analyse:
+	docker compose exec $(PHP_SERVICE) ./vendor/bin/phpinsights analyse $(path)
+
 #TEST COMMANDS
 #========================================
 test-init:

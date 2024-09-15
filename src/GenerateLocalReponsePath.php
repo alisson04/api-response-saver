@@ -16,113 +16,44 @@ final class GenerateLocalReponsePath
      */
     private array $mapParams;
 
-    /**
-     * @var array<string, string> $mapUriNecessaryParams
-     */
-    private array $mapUriNecessaryParams;
-
-    private string $uri;
-
-    /**
-     * @var array<string, int|string> $formParams
-     */
-    private array $formParams;
+    private RequestValidator $requestValidator;
 
     /**
      * @param array<string, string> $mapUris
      * @param array<string, string> $mapParams
-     * @param array<string, string> $mapUriNecessaryParams
+     * @param array<string, string> $mapUriRequiredParams
      */
     public function __construct(
         array $mapUris,
         array $mapParams,
-        array $mapUriNecessaryParams
+        array $mapUriRequiredParams
     ) {
         $this->mapUris = $mapUris;
         $this->mapParams = $mapParams;
-        $this->mapUriNecessaryParams = $mapUriNecessaryParams;
+
+        $this->requestValidator = new RequestValidator(
+            $mapUris,
+            $mapParams,
+            $mapUriRequiredParams
+        );
     }
 
     /**
-     * @param array<string, int|string> $formParams
+     * @param array<string, int|string> $params
      */
-    public function run(string $uri, array $formParams = []): string
+    public function run(string $uri, array $params = []): string
     {
-        $this->uri = $uri;
-        $this->formParams = $formParams;
-
-        $this->validate();
+        $this->requestValidator->run($uri, $params);
 
         $filePath = $this->mapUris[$uri];
 
-        foreach ($formParams as $key => $value) {
-            $filePath .= '/' . $this->mapParams[$key] . "{$value}";
+        $joinKeyValue = fn (int $v, string $k) => "{$this->mapParams[$k]}{$v}";
+        $pathPieces = array_map($joinKeyValue, $params, array_keys($params));
+
+        if (count($pathPieces)) {
+            return $filePath . '/' . implode('/', $pathPieces);
         }
 
         return $filePath;
-    }
-
-    private function validate(): void
-    {
-        $this->validateUri($this->uri);
-
-        $formParamsKeys = array_keys($this->formParams);
-
-        $this->validateInvalidParams($formParamsKeys);
-        $this->validateInvalidParamsForUri($formParamsKeys);
-        $this->validateMissingParamsForUri($formParamsKeys);
-    }
-
-    private function validateUri(): void
-    {
-        $invalidUri = ! isset($this->mapUris[$this->uri]);
-
-        if ($invalidUri) {
-            throw new \Exception("Uri not found: {$this->uri}");
-        }
-    }
-
-    /**
-     * @param array<int, string> $formParamsKeys
-     */
-    private function validateInvalidParamsForUri(array $formParamsKeys): void
-    {
-        $uriNecessaryParams = $this->mapUriNecessaryParams[$this->uri];
-
-        $invalidParamsForUri = array_diff($formParamsKeys, $uriNecessaryParams);
-        if (count($invalidParamsForUri)) {
-            $paramsString = implode(', ', $invalidParamsForUri);
-            throw new \Exception(
-                "Invalid params for uri({$this->uri}): {$paramsString}"
-            );
-        }
-    }
-
-    /**
-     * @param array<int, string> $formParamsKeys
-     */
-    private function validateInvalidParams(array $formParamsKeys): void
-    {
-        $mapParamsKeys = array_keys($this->mapParams);
-        $invalidParams = array_diff($formParamsKeys, $mapParamsKeys);
-        if (count($invalidParams)) {
-            $paramsString = implode(', ', $invalidParams);
-            throw new \Exception("Invalid params found: {$paramsString}");
-        }
-    }
-
-    /**
-     * @param array<int, string> $formParamsKeys
-     */
-    private function validateMissingParamsForUri(array $formParamsKeys): void
-    {
-        $uriNecessaryParams = $this->mapUriNecessaryParams[$this->uri];
-        $missingRequired = array_diff($uriNecessaryParams, $formParamsKeys);
-        if (count($missingRequired)) {
-            $paramsString = implode(', ', $missingRequired);
-            throw new \Exception(
-                "Missing params for uri({$this->uri}): {$paramsString}"
-            );
-        }
     }
 }
