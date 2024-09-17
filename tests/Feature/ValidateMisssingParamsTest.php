@@ -1,6 +1,6 @@
 <?php
 
-use Alisson04\ApiResponseSaver\Validators\RequestParamsValidator;
+use Alisson04\ApiResponseSaver\Validators\ValidateMissingParams;
 
 beforeEach(function () {
     $mapUris = [
@@ -18,22 +18,12 @@ beforeEach(function () {
         'ConsultarMarcas' => ['codigoTabelaReferencia', 'codigoTipoVeiculo'],
     ];
 
-    $this->service = new RequestParamsValidator(
+    $this->service = new ValidateMissingParams(
         $mapUris,
         $mapParams,
         $mapUriNecessaryParams
     );
 });
-
-it('throws exception by wrong params', function () {
-    $this->service
-        ->validate('ConsultarTabelaDeReferencia', ['wrongParam' => 'wrongValue', 'reference' => 1]);
-})->throws('Invalid params found: wrongParam');
-
-it('throws exception by wrong params for uri', function () {
-    $this->service
-        ->validate('ConsultarTabelaDeReferencia', ['codigoTabelaReferencia' => 1]);
-})->throws('Invalid params for uri(ConsultarTabelaDeReferencia): codigoTabelaReferencia');
 
 it('throws exception by missing params for uri', function () {
     $path = $this->service->validate('ConsultarMarcas', []);

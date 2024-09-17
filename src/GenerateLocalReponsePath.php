@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Alisson04\ApiResponseSaver;
 
-use Alisson04\ApiResponseSaver\Validators\RequestParamsValidator;
-use Alisson04\ApiResponseSaver\Validators\RequestUriValidator;
+use Alisson04\ApiResponseSaver\Validators\ValidateInvalidParams;
+use Alisson04\ApiResponseSaver\Validators\ValidateMissingParams;
 
 final class GenerateLocalReponsePath
 {
@@ -19,8 +19,8 @@ final class GenerateLocalReponsePath
      */
     private array $mapParams;
 
-    private RequestUriValidator $requestUriValidator;
-    private RequestParamsValidator $requestParamsValidator;
+    private ValidateMissingParams $validateMissingParams;
+    private ValidateInvalidParams $validateInvalidParams;
 
     /**
      * @param array<string, string> $mapUris
@@ -35,12 +35,12 @@ final class GenerateLocalReponsePath
         $this->mapUris = $mapUris;
         $this->mapParams = $mapParams;
 
-        $this->requestUriValidator = new RequestUriValidator(
+        $this->validateMissingParams = new ValidateMissingParams(
             $mapUris,
             $mapParams,
             $mapUriRequiredParams
         );
-        $this->requestParamsValidator = new RequestParamsValidator(
+        $this->validateInvalidParams = new ValidateInvalidParams(
             $mapUris,
             $mapParams,
             $mapUriRequiredParams
@@ -52,8 +52,8 @@ final class GenerateLocalReponsePath
      */
     public function run(string $uri, array $params = []): string
     {
-        $this->requestUriValidator->validate($uri);
-        $this->requestParamsValidator->validate($uri, $params);
+        $this->validateMissingParams->validate($uri, $params);
+        $this->validateInvalidParams->validate($uri, $params);
 
         $filePath = $this->mapUris[$uri];
 

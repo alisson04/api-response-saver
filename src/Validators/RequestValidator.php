@@ -17,11 +17,14 @@ abstract class RequestValidator
     protected array $mapParams;
 
     /**
-     * @var array<string, string> $mapUriRequiredParams
+     * @var array<int, string> $mapParams
+     */
+    protected array $mapParamKeys;
+
+    /**
+     * @var array<string, array<string, int|string>> $mapUriRequiredParams
      */
     protected array $mapUriRequiredParams;
-
-    protected string $uri;
 
     /**
      * @var array<string, int|string> $formParams
@@ -41,5 +44,6 @@ abstract class RequestValidator
         $this->mapUris = $mapUris;
         $this->mapParams = $mapParams;
         $this->mapUriRequiredParams = $mapUriRequiredParams;
+        $this->mapParamKeys = array_keys($this->mapParams);
     }
 }
