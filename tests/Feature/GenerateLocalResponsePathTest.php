@@ -1,6 +1,6 @@
 <?php
 
-use Alisson04\ApiResponseSaver\GenerateLocalReponsePath;
+use Alisson04\ApiResponseSaver\GenerateReponsePath;
 
 beforeEach(function () {
     $mapUris = [
@@ -18,7 +18,7 @@ beforeEach(function () {
         'ConsultarMarcas' => ['codigoTabelaReferencia', 'codigoTipoVeiculo'],
     ];
 
-    $this->service = new GenerateLocalReponsePath($mapUris, $mapParams, $mapUriNecessaryParams);
+    $this->service = new GenerateReponsePath($mapUris, $mapParams, $mapUriNecessaryParams);
 });
 
 it('should generate path for references', function () {

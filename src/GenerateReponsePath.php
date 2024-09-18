@@ -7,7 +7,7 @@ namespace Alisson04\ApiResponseSaver;
 use Alisson04\ApiResponseSaver\Validators\ValidateInvalidParams;
 use Alisson04\ApiResponseSaver\Validators\ValidateMissingParams;
 
-final class GenerateLocalReponsePath
+final class GenerateReponsePath
 {
     /**
      * @var array<string, string> $mapUris
